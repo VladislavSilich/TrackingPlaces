@@ -10,7 +10,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -93,7 +92,6 @@ public class MapActivity extends AppCompatActivity implements LocationManger.Loc
         CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
         googleMap.animateCamera(cameraUpdate);
         googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude,longitude)));
-        Toast.makeText(MapActivity.this, "latitude" + latitude + "longitude" + longitude, Toast.LENGTH_LONG).show(); //show your latitude and longitude on toast
     }
 
     @Override
