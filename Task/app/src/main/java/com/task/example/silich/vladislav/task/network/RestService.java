@@ -11,6 +11,7 @@ import retrofit2.http.Query;
  */
 
 public interface RestService {
-@GET("json")
+@GET("nearbysearch/json")
     Call<ResponceSearchPlaces> getPlace (@Query("location")String location,@Query("radius") int radius,@Query("key") String apiKey);
+
 }

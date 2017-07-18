@@ -1,5 +1,6 @@
 package com.task.example.silich.vladislav.task;
 
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -17,24 +18,13 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.task.example.silich.vladislav.task.network.responce.ResponceSearchPlaces;
-
-import java.util.ArrayList;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MapActivity extends AppCompatActivity implements LocationManger.LocationFound {
     SupportMapFragment mapFragment;
     GoogleMap googleMap;
     double latitude;
     double longitude;
-    DataManager dataManager;
-    ArrayList<String> photoReference;
-    ArrayList<String > address;
-    private static final String API_KEY = "AIzaSyCDduz-_Pe51uFLJi0GeKQT7vrpjoZHCYI";
-    private static final int RADIUS = 50000;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,9 +34,6 @@ public class MapActivity extends AppCompatActivity implements LocationManger.Loc
         locationManger.setUpLocation();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        photoReference = new ArrayList<>();
-        address = new ArrayList<>();
-        dataManager = DataManager.getInstnce();
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapView);
 
         googleMap = mapFragment.getMap();
@@ -61,39 +48,17 @@ public class MapActivity extends AppCompatActivity implements LocationManger.Loc
             @Override
             public void onClick(View view) {
                 String location = latitude+","+longitude;
-                Call<ResponceSearchPlaces> call = dataManager.getPlaceReference(location,RADIUS,API_KEY);
-                call.enqueue(new Callback<ResponceSearchPlaces>() {
-                    @Override
-                    public void onResponse(Call<ResponceSearchPlaces> call, Response<ResponceSearchPlaces> response) {
-                        response.body();
-                        int a = response.body().getResults().size();
-                        for (int i = 0; i < response.body().getResults().size(); i++){
-                            if (response.body().getResults().get(i).getPhotos() == null) {
-                                i++;
-                            }
-                            else {
-                                photoReference.add(response.body().getResults().get(i).getPhotos().get(0).getPhotoReference());
-                                address.add(response.body().getResults().get(i).getVicinity());
-                            }
-                        }
-                            getPhoto();
-                    }
+                Intent intent = new Intent(MapActivity.this,GalleryActivity.class);
+                intent.putExtra("location",location);
+                startActivity(intent);
 
-                    @Override
-                    public void onFailure(Call<ResponceSearchPlaces> call, Throwable t) {
-
-                    }
-                });
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
     }
 
-    private void getPhoto() {
-        photoReference.size();
-        address.size();
-    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

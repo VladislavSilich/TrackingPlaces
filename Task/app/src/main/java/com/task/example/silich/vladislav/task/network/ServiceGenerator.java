@@ -11,7 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ServiceGenerator {
 
-    private static  final String BASE_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/";
+    private static  final String BASE_URL = "https://maps.googleapis.com/maps/api/place/";
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
     private static Retrofit.Builder sBuilder = new Retrofit.Builder()
