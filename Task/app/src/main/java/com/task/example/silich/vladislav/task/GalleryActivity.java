@@ -21,10 +21,10 @@ public class GalleryActivity extends AppCompatActivity {
      DataManager dataManager;
      ArrayList<String> photoReference;
      ArrayList<String > address;
-    RecyclerView recyclerView;
-    RecyclerView.LayoutManager recyclerViewLayoutManager;
-    RecyclerView.Adapter recyclerView_Adapter;
     ImageView img;
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
     private static final String API_KEY = "AIzaSyCDduz-_Pe51uFLJi0GeKQT7vrpjoZHCYI";
     private static final int RADIUS = 50000;
     @Override
@@ -32,14 +32,20 @@ public class GalleryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
         img = (ImageView)findViewById(imgPhoto);
+        getSupportActionBar().hide();
          location = getIntent().getStringExtra("location");
         photoReference = new ArrayList<>();
           address = new ArrayList<>();
          dataManager = DataManager.getInstnce();
-       recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
-        recyclerViewLayoutManager = new GridLayoutManager(GalleryActivity.this,2);
-        recyclerView.setLayoutManager(recyclerViewLayoutManager);
         getReference();
+        mRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+        mRecyclerView.setHasFixedSize(true);
+
+        // используем linear layout manager
+        mLayoutManager = new GridLayoutManager(this,2);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mAdapter = new RecyclerAdapter(photoReference,this);
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     private void getReference() {
@@ -50,12 +56,12 @@ public class GalleryActivity extends AppCompatActivity {
                 response.body();
                 int a = response.body().getResults().size();
                 for (int i = 0; i < response.body().getResults().size(); i++){
-                    if (response.body().getResults().get(i).getPhotos() == null) {
-                        i++;
-                    }
-                    else {
+                    if (response.body().getResults().get(i).getPhotos() != null && photoReference.size() < 4) {
                         photoReference.add(response.body().getResults().get(i).getPhotos().get(0).getPhotoReference());
                         address.add(response.body().getResults().get(i).getVicinity());
+                    }
+                    else {
+                       i++;
                     }
                 }
                 showPhoto();
@@ -70,7 +76,8 @@ public class GalleryActivity extends AppCompatActivity {
     private void showPhoto() {
           photoReference.size();
            address.size();
-        recyclerView_Adapter = new AdapterPhoto(photoReference,address,GalleryActivity.this);
-        recyclerView.setAdapter(recyclerView_Adapter);
+        mAdapter = new RecyclerAdapter(photoReference,this);
+        mRecyclerView.setAdapter(mAdapter);
+
     }
 }
