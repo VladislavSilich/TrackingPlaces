@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.task.example.silich.vladislav.task.GalleryActivity">
+    tools:context="com.task.example.silich.vladislav.task.activity.GalleryActivity">
 
 
 
@@ -14,5 +14,20 @@
         android:layout_height="wrap_content"
         android:scrollbars="vertical"
         />
+
+    <ImageButton
+        android:id="@+id/imageGoogle"
+        android:clickable="true"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/image_button"
+        app:srcCompat="@drawable/common_signin_btn_icon_pressed_dark"
+        android:layout_marginRight="2dp"
+        android:layout_marginTop="2dp"/>
+
+
 
 </RelativeLayout>

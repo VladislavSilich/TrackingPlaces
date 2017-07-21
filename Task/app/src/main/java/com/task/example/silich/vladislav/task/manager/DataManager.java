@@ -1,4 +1,4 @@
-package com.task.example.silich.vladislav.task;
+package com.task.example.silich.vladislav.task.manager;
 
 import com.task.example.silich.vladislav.task.network.RestService;
 import com.task.example.silich.vladislav.task.network.ServiceGenerator;

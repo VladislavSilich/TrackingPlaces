@@ -1,4 +1,4 @@
-package com.task.example.silich.vladislav.task;
+package com.task.example.silich.vladislav.task.activity;
 
 import android.content.Intent;
 import android.location.Location;
@@ -18,6 +18,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.task.example.silich.vladislav.task.manager.LocationManger;
+import com.task.example.silich.vladislav.task.R;
 
 public class MapActivity extends AppCompatActivity implements LocationManger.LocationFound {
     SupportMapFragment mapFragment;

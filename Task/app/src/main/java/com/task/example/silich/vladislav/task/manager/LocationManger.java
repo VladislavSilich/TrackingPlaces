@@ -1,4 +1,4 @@
-package com.task.example.silich.vladislav.task;
+package com.task.example.silich.vladislav.task.manager;
 
 import android.app.Activity;
 import android.app.Dialog;

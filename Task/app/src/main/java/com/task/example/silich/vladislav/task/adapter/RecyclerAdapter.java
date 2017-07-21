@@ -1,4 +1,4 @@
-package com.task.example.silich.vladislav.task;
+package com.task.example.silich.vladislav.task.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.task.example.silich.vladislav.task.R;
 
 import java.util.ArrayList;
 
