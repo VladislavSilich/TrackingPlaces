@@ -1,6 +1,13 @@
 package com.task.example.silich.vladislav.task.activity;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,7 +21,11 @@ import com.task.example.silich.vladislav.task.adapter.RecyclerAdapter;
 import com.task.example.silich.vladislav.task.manager.DataManager;
 import com.task.example.silich.vladislav.task.network.responce.ResponceSearchPlaces;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -28,6 +39,7 @@ public class GalleryActivity extends AppCompatActivity {
      DataManager dataManager;
      ArrayList<String> photoReference;
      ArrayList<String > address;
+    String[] masRef = new String[10];
     ImageView img;
     ImageButton imgGmail;
     private RecyclerView mRecyclerView;
@@ -65,9 +77,14 @@ public class GalleryActivity extends AppCompatActivity {
     }
 
     private void sendPhoto() {
-        URL url = null;
-        String imageurl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=1024&maxheight=645&photoreference=CmRaAAAANo744JaZUr7rVglK74HhpRu_whlUQ12lNAbxv-RNEx0Yboy831ElNVATx5eHbu3PaioDlSIm-cXDfI_vk3PZjC95K8xdb8YlyV7KPZamMKakTNHyg6qwL0PgGUL4Yqo5EhCe-kK6DeJkMOiiho_0rsBzGhTfjHbmtvWu03ZV-uaKy4HMQaD_xg&key=AIzaSyCDduz-_Pe51uFLJi0GeKQT7vrpjoZHCYI";
-        img.getDrawable();
+
+            for (int i = 0; i < photoReference.size(); i++){
+                masRef[i] ="https://maps.googleapis.com/maps/api/place/photo?maxwidth=1024&maxheight=645&photoreference=" +
+                        photoReference.get(i) + "&key=AIzaSyCDduz-_Pe51uFLJi0GeKQT7vrpjoZHCYI";
+            }
+            AsyncTaskGmail photo = new AsyncTaskGmail();
+            photo.execute(masRef);
+
         //emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("https://maps.googleapis.com/maps/api/place/photo?maxwidth=1024&maxheight=645&photoreference=CmRaAAAANo744JaZUr7rVglK74HhpRu_whlUQ12lNAbxv-RNEx0Yboy831ElNVATx5eHbu3PaioDlSIm-cXDfI_vk3PZjC95K8xdb8YlyV7KPZamMKakTNHyg6qwL0PgGUL4Yqo5EhCe-kK6DeJkMOiiho_0rsBzGhTfjHbmtvWu03ZV-uaKy4HMQaD_xg&key=AIzaSyCDduz-_Pe51uFLJi0GeKQT7vrpjoZHCYI"));
     }
 
@@ -102,7 +119,87 @@ public class GalleryActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
 
     }
+class AsyncTaskGmail extends AsyncTask<String,Void,Bitmap[]>{
 
 
+    @Override
+    protected Bitmap[] doInBackground(String... params) {
+        Bitmap [] bitmap = new Bitmap[10];
+        try {
+            for (int i = 0; i < params.length; i++) {
+                URL url = null;
+                // String imageurl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=1024&maxheight=645&photoreference=CmRaAAAANo744JaZUr7rVglK74HhpRu_whlUQ12lNAbxv-RNEx0Yboy831ElNVATx5eHbu3PaioDlSIm-cXDfI_vk3PZjC95K8xdb8YlyV7KPZamMKakTNHyg6qwL0PgGUL4Yqo5EhCe-kK6DeJkMOiiho_0rsBzGhTfjHbmtvWu03ZV-uaKy4HMQaD_xg&key=AIzaSyCDduz-_Pe51uFLJi0GeKQT7vrpjoZHCYI";
+                Bitmap bm = null;
+                InputStream is = null;
+                BufferedInputStream bis = null;
+                String imageurl = null;
+                imageurl = params[i];
+                try {
+                    URLConnection conn = new URL(imageurl).openConnection();
+                    conn.connect();
+                    is = conn.getInputStream();
+                    bis = new BufferedInputStream(is, 8192);
+                    bm = BitmapFactory.decodeStream(bis);
+                    bitmap[i] = bm;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    if (bis != null) {
+                        try {
+                            bis.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if (is != null) {
+                        try {
+                            is.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
 
+            }
+
+        }
+        catch(Exception e){
+                e.printStackTrace();
+            }
+
+        return bitmap;
+    }
+
+    @Override
+    protected void onPostExecute(Bitmap[] bm) {
+        super.onPostExecute(bm);
+        showPhotoP(bm);
+
+    }
 }
+
+    private void showPhotoP(Bitmap [] bm) {
+        //Uri[] urimas = new Uri[10];
+        ArrayList<Uri> urimas = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            Bitmap mutableBitmap = bm[i].copy(Bitmap.Config.ARGB_8888, true);
+            View view = new View(this);
+            view.draw(new Canvas(mutableBitmap));
+            String path = MediaStore.Images.Media.insertImage(getContentResolver(), mutableBitmap, "rbt", null);
+            Uri uri = Uri.parse(path);
+            urimas.add(uri);
+        }
+            urimas.size();
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_SEND_MULTIPLE);
+            intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, urimas);
+            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"vladislav.silich.1996@gmail.com"});
+            intent.putExtra(Intent.EXTRA_SUBJECT, "sad");
+            intent.putExtra(Intent.EXTRA_TEXT, "sdasd");
+            intent.setPackage("com.google.android.gm");
+            startActivity(intent);
+        }
+    }
+
+
