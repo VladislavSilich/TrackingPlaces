@@ -39,9 +39,10 @@ public class GalleryActivity extends AppCompatActivity {
      DataManager dataManager;
      ArrayList<String> photoReference;
      ArrayList<String > address;
-    String[] masRef = new String[10];
+    String[] masReference = new String[10];
     ImageView img;
-    ImageButton imgGmail;
+    ImageButton imgGmail,imgWhatsApp;
+    int CountSocial = 0;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -57,7 +58,17 @@ public class GalleryActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(GalleryActivity.this,"ddfsdfsdfs",Toast.LENGTH_LONG).show();
-                sendPhoto();
+                CountSocial = 1;
+                createPicturesArray();
+            }
+        });
+        imgWhatsApp = (ImageButton)findViewById(R.id.imageWhatsApp);
+        imgWhatsApp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CountSocial = 2;
+                createPicturesArray();
+                Toast.makeText(GalleryActivity.this,"wwwwwwwwwww",Toast.LENGTH_LONG).show();
             }
         });
         getSupportActionBar().hide();
@@ -69,23 +80,19 @@ public class GalleryActivity extends AppCompatActivity {
         mRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
 
-        // используем linear layout manager
         mLayoutManager = new GridLayoutManager(this,2);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new RecyclerAdapter(photoReference,this);
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    private void sendPhoto() {
-
-            for (int i = 0; i < photoReference.size(); i++){
-                masRef[i] ="https://maps.googleapis.com/maps/api/place/photo?maxwidth=1024&maxheight=645&photoreference=" +
+    private void createPicturesArray() {
+        for (int i = 0; i < photoReference.size(); i++){
+                masReference[i] ="https://maps.googleapis.com/maps/api/place/photo?maxwidth=1024&maxheight=645&photoreference=" +
                         photoReference.get(i) + "&key=AIzaSyCDduz-_Pe51uFLJi0GeKQT7vrpjoZHCYI";
             }
-            AsyncTaskGmail photo = new AsyncTaskGmail();
-            photo.execute(masRef);
-
-        //emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("https://maps.googleapis.com/maps/api/place/photo?maxwidth=1024&maxheight=645&photoreference=CmRaAAAANo744JaZUr7rVglK74HhpRu_whlUQ12lNAbxv-RNEx0Yboy831ElNVATx5eHbu3PaioDlSIm-cXDfI_vk3PZjC95K8xdb8YlyV7KPZamMKakTNHyg6qwL0PgGUL4Yqo5EhCe-kK6DeJkMOiiho_0rsBzGhTfjHbmtvWu03ZV-uaKy4HMQaD_xg&key=AIzaSyCDduz-_Pe51uFLJi0GeKQT7vrpjoZHCYI"));
+                AsyncTaskGmail photo = new AsyncTaskGmail();
+                photo.execute(masReference);
     }
 
     private void getReference() {
@@ -121,26 +128,23 @@ public class GalleryActivity extends AppCompatActivity {
     }
 class AsyncTaskGmail extends AsyncTask<String,Void,Bitmap[]>{
 
-
     @Override
     protected Bitmap[] doInBackground(String... params) {
-        Bitmap [] bitmap = new Bitmap[10];
+        Bitmap [] bitmapPictures = new Bitmap[10];
         try {
             for (int i = 0; i < params.length; i++) {
-                URL url = null;
-                // String imageurl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=1024&maxheight=645&photoreference=CmRaAAAANo744JaZUr7rVglK74HhpRu_whlUQ12lNAbxv-RNEx0Yboy831ElNVATx5eHbu3PaioDlSIm-cXDfI_vk3PZjC95K8xdb8YlyV7KPZamMKakTNHyg6qwL0PgGUL4Yqo5EhCe-kK6DeJkMOiiho_0rsBzGhTfjHbmtvWu03ZV-uaKy4HMQaD_xg&key=AIzaSyCDduz-_Pe51uFLJi0GeKQT7vrpjoZHCYI";
                 Bitmap bm = null;
                 InputStream is = null;
                 BufferedInputStream bis = null;
-                String imageurl = null;
-                imageurl = params[i];
+                String imageUrl = null;
+                imageUrl = params[i];
                 try {
-                    URLConnection conn = new URL(imageurl).openConnection();
+                    URLConnection conn = new URL(imageUrl).openConnection();
                     conn.connect();
                     is = conn.getInputStream();
                     bis = new BufferedInputStream(is, 8192);
                     bm = BitmapFactory.decodeStream(bis);
-                    bitmap[i] = bm;
+                    bitmapPictures[i] = bm;
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -159,47 +163,65 @@ class AsyncTaskGmail extends AsyncTask<String,Void,Bitmap[]>{
                         }
                     }
                 }
-
             }
-
         }
         catch(Exception e){
                 e.printStackTrace();
             }
 
-        return bitmap;
+        return bitmapPictures;
     }
 
     @Override
     protected void onPostExecute(Bitmap[] bm) {
         super.onPostExecute(bm);
-        showPhotoP(bm);
-
+        if (CountSocial == 1 ){
+            sendGmailPictures(bm);
+        }else if (CountSocial == 2){
+            sendWhatsApp(bm);
+        }
     }
 }
 
-    private void showPhotoP(Bitmap [] bm) {
-        //Uri[] urimas = new Uri[10];
-        ArrayList<Uri> urimas = new ArrayList<>();
+    private void sendWhatsApp(Bitmap[] bm) {
+        ArrayList<Uri> uriList = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             Bitmap mutableBitmap = bm[i].copy(Bitmap.Config.ARGB_8888, true);
             View view = new View(this);
             view.draw(new Canvas(mutableBitmap));
             String path = MediaStore.Images.Media.insertImage(getContentResolver(), mutableBitmap, "rbt", null);
             Uri uri = Uri.parse(path);
-            urimas.add(uri);
+            uriList.add(uri);
         }
-            urimas.size();
-            Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_SEND_MULTIPLE);
-            intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, urimas);
-            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"vladislav.silich.1996@gmail.com"});
-            intent.putExtra(Intent.EXTRA_SUBJECT, "sad");
-            intent.putExtra(Intent.EXTRA_TEXT, "sdasd");
-            intent.setPackage("com.google.android.gm");
-            startActivity(intent);
+        uriList.size();
+        Intent intentWhatsApp = new Intent();
+        intentWhatsApp.setType("image/*");
+        intentWhatsApp.setAction(Intent.ACTION_SEND_MULTIPLE);
+        intentWhatsApp.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uriList);
+        intentWhatsApp.setPackage("com.whatsapp");
+        startActivity(intentWhatsApp);
+    }
+
+    private void sendGmailPictures(Bitmap [] bm) {
+        ArrayList<Uri> uriList = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            Bitmap mutableBitmap = bm[i].copy(Bitmap.Config.ARGB_8888, true);
+            View view = new View(this);
+            view.draw(new Canvas(mutableBitmap));
+            String path = MediaStore.Images.Media.insertImage(getContentResolver(), mutableBitmap, "rbt", null);
+            Uri uri = Uri.parse(path);
+            uriList.add(uri);
+        }
+            uriList.size();
+            Intent intentGmail = new Intent();
+            intentGmail.setType("image/*");
+            intentGmail.setAction(Intent.ACTION_SEND_MULTIPLE);
+            intentGmail.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uriList);
+            intentGmail.setPackage("com.google.android.gm");
+            startActivity(intentGmail);
         }
     }
+
+
 
 

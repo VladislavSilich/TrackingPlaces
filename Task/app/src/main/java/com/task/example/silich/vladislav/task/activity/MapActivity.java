@@ -58,6 +58,7 @@ public class MapActivity extends AppCompatActivity implements LocationManger.Loc
                         .setAction("Action", null).show();
             }
         });
+        getSupportActionBar().hide();
     }
 
 

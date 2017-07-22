@@ -28,6 +28,16 @@
         android:layout_marginRight="2dp"
         android:layout_marginTop="2dp"/>
 
+    <ImageButton
+        android:id="@+id/imageWhatsApp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@color/green"
+        android:layout_marginLeft="10dp"
+        app:srcCompat="@android:drawable/stat_sys_phone_call"
+        android:layout_toLeftOf="@+id/imageGoogle"
+        android:layout_alignBottom="@+id/imageGoogle"
+        android:layout_alignTop="@+id/imageGoogle" />
 
 
 </RelativeLayout>
