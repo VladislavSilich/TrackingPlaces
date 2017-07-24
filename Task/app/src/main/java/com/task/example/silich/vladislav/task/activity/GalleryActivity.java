@@ -38,7 +38,6 @@ public class GalleryActivity extends AppCompatActivity {
     String location;
      DataManager dataManager;
      ArrayList<String> photoReference;
-     ArrayList<String > address;
     String[] masReference = new String[10];
     ImageView img;
     ImageButton imgGmail,imgWhatsApp;
@@ -57,7 +56,7 @@ public class GalleryActivity extends AppCompatActivity {
         imgGmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(GalleryActivity.this,"ddfsdfsdfs",Toast.LENGTH_LONG).show();
+                Toast.makeText(GalleryActivity.this,"Please, wait.",Toast.LENGTH_LONG).show();
                 CountSocial = 1;
                 createPicturesArray();
             }
@@ -68,13 +67,12 @@ public class GalleryActivity extends AppCompatActivity {
             public void onClick(View v) {
                 CountSocial = 2;
                 createPicturesArray();
-                Toast.makeText(GalleryActivity.this,"wwwwwwwwwww",Toast.LENGTH_LONG).show();
+                Toast.makeText(GalleryActivity.this,"Please, wait",Toast.LENGTH_LONG).show();
             }
         });
         getSupportActionBar().hide();
          location = getIntent().getStringExtra("location");
         photoReference = new ArrayList<>();
-          address = new ArrayList<>();
          dataManager = DataManager.getInstnce();
         getReference();
         mRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
@@ -104,7 +102,6 @@ public class GalleryActivity extends AppCompatActivity {
                 for (int i = 0; i < response.body().getResults().size(); i++){
                     if (response.body().getResults().get(i).getPhotos() != null && photoReference.size() < 4) {
                         photoReference.add(response.body().getResults().get(i).getPhotos().get(0).getPhotoReference());
-                        address.add(response.body().getResults().get(i).getVicinity());
                     }
                     else {
                        i++;
@@ -121,7 +118,6 @@ public class GalleryActivity extends AppCompatActivity {
     }
     private void showPhoto() {
           photoReference.size();
-           address.size();
         mAdapter = new RecyclerAdapter(photoReference,this);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -194,12 +190,17 @@ class AsyncTaskGmail extends AsyncTask<String,Void,Bitmap[]>{
             uriList.add(uri);
         }
         uriList.size();
-        Intent intentWhatsApp = new Intent();
-        intentWhatsApp.setType("image/*");
-        intentWhatsApp.setAction(Intent.ACTION_SEND_MULTIPLE);
-        intentWhatsApp.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uriList);
-        intentWhatsApp.setPackage("com.whatsapp");
-        startActivity(intentWhatsApp);
+        try {
+            Intent intentWhatsApp = new Intent();
+            intentWhatsApp.setType("image/*");
+            intentWhatsApp.setAction(Intent.ACTION_SEND_MULTIPLE);
+            intentWhatsApp.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uriList);
+            intentWhatsApp.setPackage("com.whatsapp");
+            startActivity(intentWhatsApp);
+        }
+        catch (Exception e){
+            Toast.makeText(GalleryActivity.this,"Sorry...You don't have any WhatsApp app",Toast.LENGTH_LONG).show();
+        }
     }
 
     private void sendGmailPictures(Bitmap [] bm) {
@@ -213,12 +214,17 @@ class AsyncTaskGmail extends AsyncTask<String,Void,Bitmap[]>{
             uriList.add(uri);
         }
             uriList.size();
+        try {
             Intent intentGmail = new Intent();
             intentGmail.setType("image/*");
             intentGmail.setAction(Intent.ACTION_SEND_MULTIPLE);
             intentGmail.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uriList);
             intentGmail.setPackage("com.google.android.gm");
             startActivity(intentGmail);
+        }
+        catch (Exception e){
+            Toast.makeText(GalleryActivity.this,"Sorry...You don't have any mail app",Toast.LENGTH_LONG).show();
+        }
         }
     }
 
