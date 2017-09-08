@@ -82,7 +82,11 @@ public class GalleryActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new RecyclerAdapter(photoReference,this);
         mRecyclerView.setAdapter(mAdapter);
+
+
     }
+
+
 
     private void createPicturesArray() {
         for (int i = 0; i < photoReference.size(); i++){
