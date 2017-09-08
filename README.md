@@ -1,5 +1,5 @@
 ## Description
-This application displays the four nearest locations from your location. 
+This application displays the four nearest places from your location. 
 It is possible to send pictures with gmail and whatsapp.
 # Screenshots
 ## Start activity
